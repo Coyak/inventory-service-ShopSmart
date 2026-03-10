@@ -4,20 +4,21 @@
 ShopSmart está pasando de una arquitectura monolítica a un sistema basado en microservicios para abordar problemas de gestión de inventario, especialmente la sincronización entre múltiples almacenes.
 
 ## Microservicios
-- **Servicio ShopSmart**: Gestiona el inventario general de productos, almacenes y maneja actualizaciones en tiempo real.
+- **Inventory Service** (Puerto 3000): Gestiona el inventario global de productos y sincroniza stock de almacenes.
+- **Warehouse Service** (Puerto 3001): Gestiona los almacenes individuales y sus inventarios.
 
 ## Endpoints
 
-### Servicio ShopSmart (Puerto 3000)
+### Inventory Service (Puerto 3000)
 #### Inventario
 - `GET /api/inventory` - Obtener todos los items de inventario
 - `GET /api/inventory/:productId` - Obtener inventario de un producto específico
 - `POST /api/inventory` - Agregar o actualizar item de inventario
 - `PUT /api/inventory/:productId` - Actualizar inventario de un producto
 - `DELETE /api/inventory/:productId` - Eliminar item de inventario
-- `POST /api/inventory/sync` - Sincronizar inventario con almacenes
+- `POST /api/inventory/sync` - Sincronizar inventario con datos de warehouse-service
 
-#### Almacenes
+### Warehouse Service (Puerto 3001)
 - `GET /api/warehouses` - Obtener todos los almacenes
 - `POST /api/warehouses` - Crear un nuevo almacén
 - `GET /api/warehouses/:id/inventory` - Obtener inventario de un almacén
@@ -32,15 +33,15 @@ ShopSmart está pasando de una arquitectura monolítica a un sistema basado en m
 ## Ejecutar Localmente
 1. Asegúrate de tener Docker y Docker Compose instalados.
 2. Ejecuta `docker-compose up --build` desde el directorio raíz.
-3. Accede al servicio en:
-   - Servicio ShopSmart: http://localhost:3000
-   - Documentación Swagger: http://localhost:3000/api-docs
+3. Accede a los servicios en:
+   - Inventory Service: http://localhost:3000 (Swagger: /api-docs)
+   - Warehouse Service: http://localhost:3001 (Swagger: /api-docs)
 
 ## Despliegue en Render
-1. Construye y sube la imagen Docker a un registro (e.g., Docker Hub).
-2. Crea un servicio en Render usando la imagen Docker.
-3. Configura variables de entorno para la conexión a MongoDB (usa MongoDB Atlas para la base de datos en la nube).
-4. Actualiza cualquier URL hardcodeada si es necesario.
+1. Construye y sube cada imagen Docker (inventory-service y warehouse-service) a un registro (Docker Hub u otro).
+2. En Render crea dos Web Services usando las imágenes correspondientes.
+3. Configura variables de entorno para cada servicio (`MONGO_URI` apuntando a la DB adecuada en MongoDB Atlas).
+4. Actualiza cualquier URL hardcodeada (e.g., en inventory-service la dirección del warehouse-service si llamas directamente).
 
 ## Mejoras Futuras
 - Agregar API Gateway para enrutamiento y autenticación.

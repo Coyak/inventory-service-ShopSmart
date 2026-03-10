@@ -8,14 +8,23 @@ services:
     volumes:
       - mongo_data:/data/db
 
-  shopsmart-service:
-    build: ./shopsmart-service
+  inventory-service:
+    build: ./inventory-service
     ports:
       - "3000:3000"
     depends_on:
       - mongo
     environment:
-      - MONGO_URI=mongodb://mongo:27017/shopsmart
+      - MONGO_URI=mongodb://mongo:27017/inventory
+
+  warehouse-service:
+    build: ./warehouse-service
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/warehouse
 
 volumes:
   mongo_data:
